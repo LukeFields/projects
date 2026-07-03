@@ -25,30 +25,38 @@ params = {
 	"timezone": "America/Los_Angeles",
 }
 
-
 with httpx.Client() as client:
     responses = client.get(url, params=params) # will be cached
 
-locations = []
-
-for response in responses.json():
+daily_data = {
+    "observation_date": [],
+    "city_id": [],
+    "temperature_2m_max": [],
+    "temperature_2m_min": [],
+    "temperature_2m_mean": [],
+    "precipitation_sum": [],
+    "precipitation_hours": [],
+    "wind_speed_10m_min": [],
+    "wind_speed_10m_max": [],
+    "wind_speed_10m_mean": [],
+}
+for idx, response in enumerate(responses.json()):
     print(f"\nCoordinates: {response["latitude"]}°N {response["longitude"]}°E")
     
     daily = response["daily"]
 
-    daily_data = {
-        "date": [pd.to_datetime(t, format="ISO8601") for t in daily["time"]],
-        "temperature_2m_max": daily["temperature_2m_max"],
-        "temperature_2m_min": daily["temperature_2m_min"],
-        "temperature_2m_mean": daily["temperature_2m_mean"],
-        "precipitation_sum": daily["precipitation_sum"],
-        "precipitation_hours": daily["precipitation_hours"],
-        "wind_speed_10m_min": daily["wind_speed_10m_min"],
-        "wind_speed_10m_max": daily["wind_speed_10m_max"],
-        "wind_speed_10m_mean": daily["wind_speed_10m_mean"],
-    }
+    daily_data["observation_date"] += [pd.to_datetime(t, format="ISO8601") for t in daily["time"]]
+    daily_data["city_id"] += [idx]*len(daily["time"])
+    daily_data["temperature_2m_max"] += daily["temperature_2m_max"]
+    daily_data["temperature_2m_min"] += daily["temperature_2m_min"]
+    daily_data["temperature_2m_mean"] += daily["temperature_2m_mean"]
+    daily_data["precipitation_sum"] += daily["precipitation_sum"]
+    daily_data["precipitation_hours"] += daily["precipitation_hours"]
+    daily_data["wind_speed_10m_min"] += daily["wind_speed_10m_min"]
+    daily_data["wind_speed_10m_max"] += daily["wind_speed_10m_max"]
+    daily_data["wind_speed_10m_mean"] += daily["wind_speed_10m_mean"]
 
-    locations.append(pd.DataFrame(data = daily_data))
 
-for loc in locations:
-    print(loc)
+df = pd.DataFrame(data = daily_data)
+
+print(df)

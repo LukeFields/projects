@@ -2,7 +2,7 @@ CREATE SCHEMA IF NOT EXISTS weather_proj_lf;
 
 CREATE TABLE IF NOT EXISTS city (
     city_id INT PRIMARY KEY,
-    city_name VARCHAR(32),
+    city_name VARCHAR(32) UNIQUE NOT NULL,
     lat NUMERIC NOT NULL,
     long NUMERIC NOT NULL
 )
