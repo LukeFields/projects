@@ -76,4 +76,4 @@ def init_db():
 if __name__ == "__main__":
     print(get_conn_params())
 
-    init_db()
+    # init_db()
