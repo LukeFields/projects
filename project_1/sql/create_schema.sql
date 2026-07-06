@@ -1,13 +1,13 @@
 CREATE SCHEMA IF NOT EXISTS weather_proj_lf;
 
-CREATE TABLE IF NOT EXISTS city (
+CREATE TABLE IF NOT EXISTS weather_proj_lf.city (
     city_id INT PRIMARY KEY,
     city_name VARCHAR(32) UNIQUE NOT NULL,
     latitude NUMERIC NOT NULL,
     longitude NUMERIC NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS observations (
+CREATE TABLE IF NOT EXISTS weather_proj_lf.observation (
     observation_id INT PRIMARY KEY,
     city_id INT NOT NULL,
     observation_date DATE NOT NULL,
@@ -20,4 +20,5 @@ CREATE TABLE IF NOT EXISTS observations (
     windspeed_max NUMERIC(4,1),
     windspeed_mean NUMERIC(4,1),
     CONSTRAINT city_id_fk FOREIGN KEY (city_id) REFERENCES weather_proj_lf.city(city_id)
+    ON DELETE CASCADE
 );

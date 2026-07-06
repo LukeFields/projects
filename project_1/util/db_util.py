@@ -1,8 +1,11 @@
 import os
 from dotenv import load_dotenv
 import psycopg
+from psycopg import sql
+from pathlib import Path
 
 load_dotenv()
+root = Path(__file__).parent.parent
 
 def get_conn_params() -> str:
     """
@@ -33,6 +36,7 @@ def get_conn_params() -> str:
     )
 
 def del_schema():
+    """delete the schema and all content"""
     with psycopg.connect(get_conn_params()) as conn:
         with conn.cursor() as cur:
             cur.execute(
@@ -43,37 +47,18 @@ def del_schema():
 
 
 def init_db():
+    schema_file = Path(root) / "sql/create_schema.sql"
+    schema_file.resolve()
+
+    with open(schema_file, "r") as f:
+        query = sql.SQL(f.read())
+
     with psycopg.connect(get_conn_params()) as conn:
         with conn.cursor() as cur:
-            cur.execute(
-                """
-                CREATE SCHEMA IF NOT EXISTS weather_proj_lf;
-
-                CREATE TABLE IF NOT EXISTS city (
-                    city_id INT PRIMARY KEY,
-                    city_name VARCHAR(32) UNIQUE NOT NULL,
-                    lat NUMERIC NOT NULL,
-                    long NUMERIC NOT NULL
-                );
-
-                CREATE TABLE IF NOT EXISTS observations (
-                    observation_id INT PRIMARY KEY,
-                    city_id INT NOT NULL,
-                    observation_date DATE NOT NULL,
-                    temp_2m_min NUMERIC(3,1),
-                    temp_2m_max NUMERIC(3,1),
-                    temp_2m_mean NUMERIC(3,1),
-                    precip_sum NUMERIC(5,1),
-                    precip_hours NUMERIC(3,1),
-                    windspeed_min NUMERIC(4,1),
-                    windspeed_max NUMERIC(4,1),
-                    windspeed_mean NUMERIC(4,1),
-                    CONSTRAINT city_id_fk FOREIGN KEY (city_id) REFERENCES weather_proj_lf.city(city_id)
-                );
-                """
-            )
+            cur.execute(query)
 
 if __name__ == "__main__":
-    print(get_conn_params())
-
     # init_db()
+    
+    # del_schema()
+    pass

@@ -4,14 +4,14 @@ import pathlib
 
 city_file = "city_data.csv"
 weather_file = "weather_data.csv"
-data_path = pathlib.Path(__file__).parent / "data"
+data_path = pathlib.Path(__file__).parent.parent / "data"
 
 def get_city_data(cities) -> pd.DataFrame:
 
     city_path = pathlib.Path(data_path) / city_file
     city_path.resolve()
 
-    if city_path.exists():
+    if city_path.is_file():
         try:
             print(f'city data found in {city_file}, reading from local storage')
             df = pd.read_csv(city_path)
@@ -59,7 +59,7 @@ def get_weather_data():
     weather_path = pathlib.Path(data_path) / weather_file
     weather_path.resolve()
 
-    if weather_path.exists():
+    if weather_path.is_file():
         try:
             print(f'weather data found in {weather_file}, reading from local storage')
             df = pd.read_csv(weather_path)
