@@ -20,9 +20,7 @@ weather_dao = WeatherDAO()
 
 weather_df["observation_date"] = pd.to_datetime(weather_df["observation_date"], format="ISO8601")
 
-
 # data integrity
-
 print(f"\nShape: {weather_df.shape[0]} rows x {weather_df.shape[1]} columns")
 print("\nColumn names")
 print(weather_df.columns.tolist())
