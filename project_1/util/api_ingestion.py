@@ -1,6 +1,7 @@
 import httpx
 import pandas as pd
 import pathlib
+import json
 
 city_file = "city_data.csv"
 weather_file = "weather_data.csv"
@@ -133,4 +134,4 @@ if __name__ == '__main__':
     cities = ["San Francisco", "Los Angeles", "Weed"]
     # print(get_city_data(cities))
 
-    print(get_weather_data())
+    get_weather_data()
