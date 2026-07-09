@@ -12,7 +12,7 @@ JOIN weather_proj_lf.city c ON c.city_id = o.city_id
 GROUP BY c.city_name
 ORDER BY diff DESC;
 
--- most calm days per year avg
+-- calm days per year avg
 WITH cte_years (yr)
 AS (
 	SELECT EXTRACT(YEAR FROM o.observation_date) yr
@@ -40,4 +40,8 @@ WHERE o.precip_sum > 0.0
 GROUP BY c.city_name, observation_month
 ORDER BY city_name, avg_days_of_rain DESC;
 
--- 
+-- yearly percentage of hours with precipitation
+SELECT c.city_name, SUM(o.precip_hours) total_precip_time, ROUND((SUM(o.precip_hours) / (COUNT(o.observation_date) * 24)), 2) precipitation_time
+FROM weather_proj_lf.observation o
+JOIN weather_proj_lf.city c ON c.city_id = o.city_id
+GROUP BY c.city_name;
