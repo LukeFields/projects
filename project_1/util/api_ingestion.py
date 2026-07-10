@@ -6,7 +6,7 @@ city_file = "city_data.csv"
 weather_file = "weather_data.csv"
 data_path = pathlib.Path(__file__).parent.parent / "data"
 pathlib.Path(data_path).mkdir(parents=True, exist_ok=True)
-timeout = httpx.Timeout(5.0, connect=10.0)
+timeout = httpx.Timeout(15.0, connect=15.0)
 
 def get_city_data(cities) -> pd.DataFrame:
 
