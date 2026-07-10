@@ -1,11 +1,12 @@
 import httpx
 import pandas as pd
 import pathlib
-import json
 
 city_file = "city_data.csv"
 weather_file = "weather_data.csv"
 data_path = pathlib.Path(__file__).parent.parent / "data"
+pathlib.Path(data_path).mkdir(parents=True, exist_ok=True)
+timeout = httpx.Timeout(5.0, connect=10.0)
 
 def get_city_data(cities) -> pd.DataFrame:
 
@@ -29,7 +30,7 @@ def get_city_data(cities) -> pd.DataFrame:
     }
 
     responses = []
-    with httpx.Client() as client:
+    with httpx.Client(timeout=timeout) as client:
         for city in cities:
             params["name"] = city
             r = client.get(url, params=params)
@@ -93,7 +94,7 @@ def get_weather_data():
         "timezone": "America/Los_Angeles",
     }
 
-    with httpx.Client() as client:
+    with httpx.Client(timeout=timeout) as client:
         responses = client.get(url, params=params)
 
     daily_data = {
@@ -108,8 +109,9 @@ def get_weather_data():
         "wind_speed_10m_max": [],
         "wind_speed_10m_mean": [],
     }
+    responses = responses.json()
 
-    for idx, response in enumerate(responses.json()):
+    for idx, response in enumerate(responses):
         daily = response["daily"]
 
         daily_data["city_id"] += [idx]*len(daily["time"])
@@ -134,4 +136,4 @@ if __name__ == '__main__':
     cities = ["San Francisco", "Los Angeles", "Weed"]
     # print(get_city_data(cities))
 
-    get_weather_data()
+    print(get_weather_data())

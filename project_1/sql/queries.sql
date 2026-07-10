@@ -33,7 +33,10 @@ AS (
 	FROM weather_proj_lf.observation o
 	GROUP BY yr
 )
-SELECT c.city_name, EXTRACT(MONTH FROM o.observation_date) observation_month, (COUNT(*) / (SELECT COUNT(*) FROM cte_years)) avg_days_of_rain
+SELECT 
+	c.city_name, 
+	EXTRACT(MONTH FROM o.observation_date) observation_month, 
+	(COUNT(*) / (SELECT COUNT(*) FROM cte_years)) avg_days_of_rain
 FROM weather_proj_lf.observation o
 JOIN weather_proj_lf.city c ON c.city_id = o.city_id
 WHERE o.precip_sum > 0.0
@@ -41,7 +44,11 @@ GROUP BY c.city_name, observation_month
 ORDER BY city_name, avg_days_of_rain DESC;
 
 -- yearly percentage of hours with precipitation
-SELECT c.city_name, SUM(o.precip_hours) total_precip_time, ROUND((SUM(o.precip_hours) / (COUNT(o.observation_date) * 24)), 2) precipitation_time
+SELECT 
+	c.city_name, 
+	ROUND(SUM(o.precip_hours)  / COUNT(DISTINCT(EXTRACT(YEAR FROM o.observation_date)))) precip_hours_per_year, 
+	ROUND((SUM(o.precip_hours) / (COUNT(o.observation_date) * 24)), 2) precipitation_time
 FROM weather_proj_lf.observation o
 JOIN weather_proj_lf.city c ON c.city_id = o.city_id
-GROUP BY c.city_name;
+GROUP BY c.city_name
+ORDER BY precipitation_time DESC;
